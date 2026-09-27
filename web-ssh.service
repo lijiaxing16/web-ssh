@@ -1,0 +1,29 @@
+[Unit]
+Description=Web SSH Platform - Linux SSH & SFTP Console
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=webssh
+WorkingDirectory=/opt/web-ssh
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+Environment="HOST=127.0.0.1"
+ExecStart=/usr/bin/node /opt/web-ssh/backend/app.js
+Restart=on-failure
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+
+# 资源限制
+LimitNOFILE=65535
+LimitNPROC=32768
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=web-ssh
+
+[Install]
+WantedBy=multi-user.target

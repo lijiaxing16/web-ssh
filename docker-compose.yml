@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web-ssh:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-ssh-platform
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      SESSION_SECRET: ${SESSION_SECRET:-please_change_this_secret}
+      ENCRYPT_KEY: ${ENCRYPT_KEY:-0123456789abcdef0123456789abcdef}
+      AUTH_ENABLED: "true"
+      DEFAULT_USER: ${DEFAULT_USER:-admin}
+      DEFAULT_PASSWORD: ${DEFAULT_PASSWORD:-Admin@123456}
+    volumes:
+      - ./tmp:/opt/web-ssh/tmp
+      - ./logs:/opt/web-ssh/logs
+    restart: unless-stopped
+    networks:
+      - web-ssh-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+networks:
+  web-ssh-network:
+    driver: bridge

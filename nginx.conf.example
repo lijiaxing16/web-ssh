@@ -1,0 +1,62 @@
+# Nginx 配置示例 - Web SSH Platform
+# 复制此文件为 /etc/nginx/sites-available/web-ssh 后使用
+
+upstream web_ssh {
+    server 127.0.0.1:3000;
+    keepalive 64;
+}
+
+server {
+    listen 80;
+    server_name ssh.example.com;
+
+    # 重定向到 HTTPS（可选）
+    # return 301 https://$server_name$request_uri;
+
+    client_max_body_size 100M;
+
+    location / {
+        proxy_pass http://web_ssh;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
+    }
+}
+
+# HTTPS 配置示例（需要 SSL 证书）
+# server {
+#     listen 443 ssl http2;
+#     server_name ssh.example.com;
+#
+#     ssl_certificate /etc/letsencrypt/live/ssh.example.com/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/ssh.example.com/privkey.pem;
+#     ssl_protocols TLSv1.2 TLSv1.3;
+#     ssl_ciphers HIGH:!aNULL:!MD5;
+#
+#     client_max_body_size 100M;
+#
+#     location / {
+#         proxy_pass http://web_ssh;
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection "upgrade";
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#         proxy_read_timeout 86400;
+#         proxy_send_timeout 86400;
+#     }
+# }
+#
+# server {
+#     listen 80;
+#     server_name ssh.example.com;
+#     return 301 https://$server_name$request_uri;
+# }
