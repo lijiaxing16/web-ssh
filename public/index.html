@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web SSH Platform</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">SSH</div>
+          <div>
+            <h1>Web SSH</h1>
+            <small>Linux Control Center</small>
+          </div>
+        </div>
+
+        <div class="connection-card">
+          <h2>新建连接</h2>
+          <form id="connectForm">
+            <label>
+              Host
+              <input name="host" value="127.0.0.1" required />
+            </label>
+            <label>
+              Port
+              <input name="port" value="22" type="number" />
+            </label>
+            <label>
+              Username
+              <input name="username" value="root" required />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" placeholder="Optional" />
+            </label>
+            <label>
+              Private Key
+              <input id="privateKeyFile" type="file" accept=".pem,.key,.ppk,.txt" />
+              <textarea id="privateKeyText" rows="5" placeholder="Paste private key here or choose a file"></textarea>
+            </label>
+            <button type="submit">Connect</button>
+          </form>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div class="status-pill success" id="statusPill">Disconnected</div>
+          <div class="topbar-actions">
+            <button class="secondary" id="refreshMonitor">Refresh</button>
+            <button class="danger" id="disconnectBtn">Disconnect</button>
+          </div>
+        </header>
+
+        <section class="monitor-grid">
+          <div class="metric-card">
+            <span>CPU</span>
+            <strong id="cpuMetric">--</strong>
+          </div>
+          <div class="metric-card">
+            <span>Memory</span>
+            <strong id="memoryMetric">--</strong>
+          </div>
+          <div class="metric-card">
+            <span>Disk</span>
+            <strong id="diskMetric">--</strong>
+          </div>
+          <div class="metric-card">
+            <span>Load</span>
+            <strong id="loadMetric">--</strong>
+          </div>
+        </section>
+
+        <section class="main-grid">
+          <div class="panel terminal-panel">
+            <div class="panel-header">
+              <h3>Terminal</h3>
+            </div>
+            <pre id="terminalOutput">SSH terminal output will appear here...</pre>
+            <form id="terminalForm">
+              <input id="terminalInput" placeholder="Type command and press Enter" autocomplete="off" />
+              <button type="submit">Send</button>
+            </form>
+          </div>
+
+          <div class="panel system-panel">
+            <div class="panel-header">
+              <h3>System Info</h3>
+            </div>
+            <div id="systemInfo" class="info-box">Not connected</div>
+          </div>
+        </section>
+
+        <section class="lower-grid">
+          <div class="panel file-panel">
+            <div class="panel-header file-header">
+              <h3>File Manager</h3>
+              <div class="file-actions">
+                <button class="secondary" id="goHome">Home</button>
+                <button class="secondary" id="mkdirBtn">New Folder</button>
+                <input id="fileUpload" type="file" hidden />
+                <label class="upload-btn" for="fileUpload">Upload</label>
+              </div>
+            </div>
+            <div class="path-bar">
+              <span>Path</span>
+              <input id="remotePath" value="/" />
+              <button id="listPathBtn">List</button>
+            </div>
+            <div id="fileList" class="file-list"></div>
+          </div>
+
+          <div class="panel process-panel">
+            <div class="panel-header">
+              <h3>Processes</h3>
+            </div>
+            <div id="processTable" class="process-table"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
